@@ -24,6 +24,7 @@ export default function App() {
   // Manual mode state
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isProcessingComplete, setIsProcessingComplete] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const backgroundPromiseRef = useRef(null);
   const backgroundResultRef = useRef(null);
 
@@ -56,11 +57,15 @@ export default function App() {
 
     // Reset manual mode state
     setIsProcessingComplete(false);
+    setShowButton(false);
     backgroundResultRef.current = null;
 
     const compressionInfo = file.compressionInfo || null;
 
     if (isManualMode) {
+      // Show analyze button after 500ms delay
+      setTimeout(() => setShowButton(true), 500);
+
       // Manual mode: start background processing, no loading spinner
       backgroundPromiseRef.current = performApiCall(file, compressionInfo)
         .then(result => {
@@ -148,10 +153,9 @@ export default function App() {
             onUpload={handleUpload}
             preview={preview}
             isLoading={isLoading}
-            showAnalyzeButton={isManualMode && preview && !isLoading && !results && !isAnalyzing}
+            showAnalyzeButton={showButton && !results && !isAnalyzing}
             onAnalyze={handleAnalyzeClick}
             isAnalyzing={isAnalyzing}
-            isProcessingComplete={isProcessingComplete}
           />
         </section>
 
@@ -200,14 +204,18 @@ function formatBytes(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
 }
 
+function stripMs(value) {
+  if (typeof value === 'string') return value.replace(/ms$/i, '');
+  return value;
+}
+
 function TimingDisplay({ timing }) {
   return (
     <div className="relative group">
-      <div className="flex items-center gap-2 px-4 py-2 bg-artvolt-gray-100 rounded-full cursor-default hover:bg-artvolt-gray-200 transition-colors">
+      <div className="flex items-center justify-center w-10 h-10 bg-artvolt-gray-100 rounded-full cursor-default hover:bg-artvolt-gray-200 transition-colors">
         <svg className="w-4 h-4 text-artvolt-vivid-cyan-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span className="text-sm font-medium text-artvolt-black">{timing.total}</span>
       </div>
 
       {/* Hover tooltip */}
@@ -221,25 +229,25 @@ function TimingDisplay({ timing }) {
               <div className="flex justify-between">
                 <span className="text-artvolt-gray-600">Compression</span>
                 <span className="font-mono text-artvolt-vivid-purple">
-                  {timing.compression.time}ms ({formatBytes(timing.compression.originalSize)} → {formatBytes(timing.compression.compressedSize)})
+                  {timing.compression.time} ({formatBytes(timing.compression.originalSize)} → {formatBytes(timing.compression.compressedSize)})
                 </span>
               </div>
             )}
             <div className="flex justify-between">
               <span className="text-artvolt-gray-600">Image Upload</span>
-              <span className="font-mono text-artvolt-vivid-cyan-blue">{timing.upload}</span>
+              <span className="font-mono text-artvolt-vivid-cyan-blue">{stripMs(timing.upload)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-artvolt-gray-600">Lens Search</span>
-              <span className="font-mono text-artvolt-vivid-cyan-blue">{timing.search} ({timing.searchRetries ?? 0})</span>
+              <span className="font-mono text-artvolt-vivid-cyan-blue">{stripMs(timing.search)} ({timing.searchRetries ?? 0})</span>
             </div>
             <div className="flex justify-between">
               <span className="text-artvolt-gray-600">AI Analysis</span>
-              <span className="font-mono text-artvolt-vivid-cyan-blue">{timing.analysis}</span>
+              <span className="font-mono text-artvolt-vivid-cyan-blue">{stripMs(timing.analysis)}</span>
             </div>
             <div className="border-t border-artvolt-gray-100 pt-2 mt-2 flex justify-between font-semibold">
               <span>Total</span>
-              <span className="text-artvolt-vivid-green-cyan font-mono">{timing.total}</span>
+              <span className="text-artvolt-vivid-green-cyan font-mono">{stripMs(timing.total)}</span>
             </div>
           </div>
           {/* Arrow */}

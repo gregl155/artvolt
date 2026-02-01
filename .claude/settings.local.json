@@ -6,7 +6,9 @@
       "Bash(npm run client:*)",
       "Bash(npm run dev:*)",
       "Bash(npm run build:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs:*)"
     ]
   }
 }

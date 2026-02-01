@@ -64,7 +64,6 @@ export default function ImageUploader({
   showAnalyzeButton = false,
   onAnalyze,
   isAnalyzing = false,
-  isProcessingComplete = false,
 }) {
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -144,12 +143,6 @@ export default function ImageUploader({
                   flex items-center gap-2 mx-auto"
               >
                 <span>Analyze</span>
-                {isProcessingComplete && (
-                  <span
-                    className="w-2 h-2 bg-artvolt-vivid-green-cyan rounded-full animate-pulse"
-                    title="Ready"
-                  />
-                )}
               </button>
             )}
 
