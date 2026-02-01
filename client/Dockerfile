@@ -25,8 +25,5 @@ RUN npm install -g serve
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
 
-# Expose port
-EXPOSE 3000
-
-# Start the server
-CMD ["serve", "dist", "-s", "-l", "3000"]
+# Start the server using PORT env variable from Railway
+CMD serve dist -s -l ${PORT:-3000}

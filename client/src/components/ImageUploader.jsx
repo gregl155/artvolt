@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 // Compress image to reduce upload time and API fetch time
@@ -65,6 +65,19 @@ export default function ImageUploader({
   onAnalyze,
   isAnalyzing = false,
 }) {
+  const cameraInputRef = useRef(null);
+
+  const handleCameraCapture = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const processedFile = file.size > 200 * 1024
+        ? await compressImage(file)
+        : file;
+      onUpload(processedFile);
+    }
+    e.target.value = '';
+  }, [onUpload]);
+
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
@@ -97,6 +110,17 @@ export default function ImageUploader({
         `}
       >
         <input {...getInputProps()} />
+
+        {/* Hidden camera input for mobile */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleCameraCapture}
+          disabled={isLoading || isAnalyzing}
+        />
 
         {preview ? (
           <div className="space-y-6">
@@ -173,6 +197,22 @@ export default function ImageUploader({
                 Supports PNG, JPG, WEBP, GIF
               </p>
             </div>
+
+            {/* Camera button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                cameraInputRef.current?.click();
+              }}
+              className="px-6 py-2 bg-artvolt-gray-100 text-artvolt-black font-medium rounded-full
+                hover:bg-artvolt-gray-200 transition-all duration-300 flex items-center gap-2 mx-auto"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>Camera</span>
+            </button>
           </div>
         )}
       </div>

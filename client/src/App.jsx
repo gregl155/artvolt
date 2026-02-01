@@ -63,8 +63,8 @@ export default function App() {
     const compressionInfo = file.compressionInfo || null;
 
     if (isManualMode) {
-      // Show analyze button after 500ms delay
-      setTimeout(() => setShowButton(true), 500);
+      // Show analyze button after 750ms delay
+      setTimeout(() => setShowButton(true), 750);
 
       // Manual mode: start background processing, no loading spinner
       backgroundPromiseRef.current = performApiCall(file, compressionInfo)
