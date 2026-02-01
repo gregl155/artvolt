@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
 import ImageUploader from './components/ImageUploader';
 import ResultsGrid from './components/ResultsGrid';
@@ -9,6 +9,9 @@ import TabView from './components/TabView';
 // API URL - uses environment variable in production, relative path in development
 const API_URL = import.meta.env.VITE_API_URL || '';
 
+// Manual mode: show Analyze button instead of auto-analyzing on upload
+const isManualMode = import.meta.env.VITE_MANUAL_MODE === 'true';
+
 export default function App() {
   const [preview, setPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +21,29 @@ export default function App() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('analysis');
 
+  // Manual mode state
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isProcessingComplete, setIsProcessingComplete] = useState(false);
+  const backgroundPromiseRef = useRef(null);
+  const backgroundResultRef = useRef(null);
+
+  // Helper function to perform the API call
+  const performApiCall = async (file, compressionInfo) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await axios.post(`${API_URL}/api/search`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120000,
+    });
+
+    return {
+      results: response.data.results,
+      analysis: response.data.analysis,
+      timing: { ...response.data.timing, compression: compressionInfo },
+    };
+  };
+
   const handleUpload = async (file) => {
     // Show preview immediately
     const previewUrl = URL.createObjectURL(file);
@@ -26,34 +52,65 @@ export default function App() {
     setResults(null);
     setAnalysis(null);
     setTiming(null);
-    setIsLoading(true);
     setActiveTab('analysis');
 
-    // Capture compression info if available
+    // Reset manual mode state
+    setIsProcessingComplete(false);
+    backgroundResultRef.current = null;
+
     const compressionInfo = file.compressionInfo || null;
 
+    if (isManualMode) {
+      // Manual mode: start background processing, no loading spinner
+      backgroundPromiseRef.current = performApiCall(file, compressionInfo)
+        .then(result => {
+          backgroundResultRef.current = result;
+          setIsProcessingComplete(true);
+          return result;
+        })
+        .catch(err => {
+          console.error('Search failed:', err);
+          setError(err.response?.data?.error || 'Search failed. Please try again.');
+          throw err;
+        });
+    } else {
+      // Original behavior: show loading immediately
+      setIsLoading(true);
+      try {
+        const result = await performApiCall(file, compressionInfo);
+        setResults(result.results);
+        setAnalysis(result.analysis);
+        setTiming(result.timing);
+      } catch (err) {
+        console.error('Search failed:', err);
+        setError(err.response?.data?.error || 'Search failed. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleAnalyzeClick = async () => {
+    if (!backgroundPromiseRef.current) return;
+
+    setIsAnalyzing(true);
+    const clickTime = Date.now();
+
     try {
-      const formData = new FormData();
-      formData.append('image', file);
+      const result = await backgroundPromiseRef.current;
+      const elapsed = Date.now() - clickTime;
 
-      const response = await axios.post(`${API_URL}/api/search`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        timeout: 120000, // 120 second timeout for LLM analysis
-      });
+      // If processing was already done (resolved instantly), add 2-3s delay
+      if (elapsed < 500) {
+        const randomDelay = 2000 + Math.random() * 1000;
+        await new Promise(resolve => setTimeout(resolve, randomDelay));
+      }
 
-      setResults(response.data.results);
-      setAnalysis(response.data.analysis);
-      setTiming({
-        ...response.data.timing,
-        compression: compressionInfo,
-      });
-    } catch (err) {
-      console.error('Search failed:', err);
-      setError(err.response?.data?.error || 'Search failed. Please try again.');
+      setResults(result.results);
+      setAnalysis(result.analysis);
+      setTiming(result.timing);
     } finally {
-      setIsLoading(false);
+      setIsAnalyzing(false);
     }
   };
 
@@ -91,6 +148,10 @@ export default function App() {
             onUpload={handleUpload}
             preview={preview}
             isLoading={isLoading}
+            showAnalyzeButton={isManualMode && preview && !isLoading && !results && !isAnalyzing}
+            onAnalyze={handleAnalyzeClick}
+            isAnalyzing={isAnalyzing}
+            isProcessingComplete={isProcessingComplete}
           />
         </section>
 
@@ -104,7 +165,7 @@ export default function App() {
         )}
 
         {/* Loading State */}
-        {isLoading && <LoadingSpinner />}
+        {(isLoading || isAnalyzing) && <LoadingSpinner />}
 
         {/* Results with Tabs */}
         {(results || analysis) && !isLoading && (

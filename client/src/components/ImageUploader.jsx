@@ -57,7 +57,15 @@ async function compressImage(file, maxSize = 1200, quality = 0.85) {
   });
 }
 
-export default function ImageUploader({ onUpload, preview, isLoading }) {
+export default function ImageUploader({
+  onUpload,
+  preview,
+  isLoading,
+  showAnalyzeButton = false,
+  onAnalyze,
+  isAnalyzing = false,
+  isProcessingComplete = false,
+}) {
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
@@ -75,7 +83,7 @@ export default function ImageUploader({ onUpload, preview, isLoading }) {
       'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.gif']
     },
     maxFiles: 1,
-    disabled: isLoading,
+    disabled: isLoading || isAnalyzing,
   });
 
   return (
@@ -86,7 +94,7 @@ export default function ImageUploader({ onUpload, preview, isLoading }) {
           border-2 border-dashed rounded-3xl p-10 text-center cursor-pointer
           transition-all duration-300 bg-white
           ${isDragActive ? 'border-artvolt-vivid-cyan-blue bg-artvolt-vivid-cyan-blue/5 scale-[1.02]' : 'border-artvolt-gray-200 hover:border-artvolt-black hover:shadow-xl'}
-          ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+          ${isLoading || isAnalyzing ? 'opacity-50 cursor-not-allowed' : ''}
         `}
       >
         <input {...getInputProps()} />
@@ -98,7 +106,7 @@ export default function ImageUploader({ onUpload, preview, isLoading }) {
                 src={preview}
                 alt="Preview"
                 className={`max-h-64 rounded-2xl shadow-lg transition-all duration-500 ${
-                  isLoading ? 'brightness-75 blur-[1px]' : 'group-hover:brightness-95'
+                  isLoading || isAnalyzing ? 'brightness-75 blur-[1px]' : 'group-hover:brightness-95'
                 }`}
               />
               
@@ -106,17 +114,52 @@ export default function ImageUploader({ onUpload, preview, isLoading }) {
                 <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                   {/* Scanning line */}
                   <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-artvolt-vivid-cyan-blue to-transparent shadow-[0_0_15px_rgba(6,147,227,1)] animate-scan z-10"></div>
-                  
+
                   {/* Overlay pulsing */}
                   <div className="absolute inset-0 bg-artvolt-vivid-cyan-blue/10 animate-pulse"></div>
                 </div>
               )}
+
+              {isAnalyzing && (
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                  {/* Scanning line - purple for analyze mode */}
+                  <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-artvolt-vivid-purple to-transparent shadow-[0_0_15px_rgba(155,81,224,1)] animate-scan z-10"></div>
+
+                  {/* Overlay pulsing */}
+                  <div className="absolute inset-0 bg-artvolt-vivid-purple/10 animate-pulse"></div>
+                </div>
+              )}
             </div>
-            
+
+            {/* Analyze Button - shown in manual mode */}
+            {showAnalyzeButton && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAnalyze?.();
+                }}
+                className="px-8 py-3 bg-artvolt-black text-white font-semibold rounded-full
+                  hover:bg-artvolt-vivid-cyan-blue transition-all duration-300
+                  shadow-lg hover:shadow-xl transform hover:scale-105
+                  flex items-center gap-2 mx-auto"
+              >
+                <span>Analyze</span>
+                {isProcessingComplete && (
+                  <span
+                    className="w-2 h-2 bg-artvolt-vivid-green-cyan rounded-full animate-pulse"
+                    title="Ready"
+                  />
+                )}
+              </button>
+            )}
+
             <p className={`text-sm font-medium transition-colors duration-300 ${
-              isLoading ? 'text-artvolt-vivid-cyan-blue animate-pulse' : 'text-artvolt-gray-500'
+              isLoading || isAnalyzing ? 'text-artvolt-vivid-cyan-blue animate-pulse' : 'text-artvolt-gray-500'
             }`}>
-              {isLoading ? 'Analyzing artwork...' : 'Drop a new image or click to replace'}
+              {isLoading ? 'Analyzing artwork...' :
+               isAnalyzing ? 'Preparing results...' :
+               showAnalyzeButton ? 'Click Analyze when ready' :
+               'Drop a new image or click to replace'}
             </p>
           </div>
         ) : (
