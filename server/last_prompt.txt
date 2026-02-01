@@ -15,63 +15,63 @@ You are an expert art historian acting as a JSON API. Your task is to analyze im
 ### INPUT DATA:
 
 Match 1:
-  Title: L'enfant à l'orange (Child with an Orange), 1951 by Pablo ...
-  Source: Ocula
-  URL: https://ocula.com/art-galleries/hauser-wirth/artworks/pablo-picasso/lenfant-a-lorange-child-with-an-orange/
+  Title: Water Lily Pond with Reflections (from the Water Lilies series ...
+  Source: Sotheby's
+  URL: https://www.sothebys.com/en/buy/auction/2025/modernites-pf2516/water-lily-pond-with-reflections-from-the-water
   Price: N/A
 
 Match 2:
-  Title: Pablo Picasso — Paloma l`orange, 1951
-  Source: Pablo Ruiz Picasso net
-  URL: https://www.pablo-ruiz-picasso.net/work-1148.php
+  Title: Roy Lichtenstein, Water Lily Pond with Reflections, 1992 ...
+  Source: Masterworks Fine Art
+  URL: https://www.masterworksfineart.com/artists/roy-lichtenstein/screen-print/water-lily-pond-with-reflections-1992/id/W-6188
   Price: N/A
 
 Match 3:
-  Title: Here are some of our Art Basel Miami Beach 2025 highlights ...
-  Source: Instagram
-  URL: https://www.instagram.com/p/DR7u2ceiUV3/
+  Title: Roy Lichtenstein | Water Lily Pond with Reflections (1992 ...
+  Source: Artsy
+  URL: https://www.artsy.net/artwork/roy-lichtenstein-water-lily-pond-with-reflections-6
   Price: N/A
 
 Match 4:
-  Title: Child With Orange by Pablo Picasso, Paint and enamel on ...
-  Source: Album Online
-  URL: https://www.album-online.com/detail/en/ODEyYjFmMA/pablo-picasso-child-orange-by-paint-enamel-plywood-january-1951-alb1624087
+  Title: MAM | kim mua | Flickr
+  Source: Flickr
+  URL: https://www.flickr.com/photos/kimmua/3481328876/
   Price: N/A
 
 Match 5:
-  Title: Amazon.com: ogican Painter and His Model by Pablo Picasso ...
-  Source: Amazon.com
-  URL: https://www.amazon.com/ogican-Reproduction-Pianting-Abstract-Decorations/dp/B0CT7VCF38
+  Title: Roy Lichtenstein - Waterlilies - Exhibitions - Richard Gray ...
+  Source: Richard Gray Gallery
+  URL: https://www.richardgraygallery.com/exhibitions/roy-lichtenstein4
   Price: N/A
 
 Match 6:
-  Title: Picasso. Amsterdam, Stedelijk Museum 1967 by PICASSO, Pablo ...
-  Source: AbeBooks
-  URL: https://www.abebooks.com/Picasso-Amsterdam-Stedelijk-Museum-1967-Pablo/16164036381/bd
+  Title: Water Lily Pond with Reflections (Study) | Contemporary Day ...
+  Source: Sotheby's
+  URL: https://www.sothebys.com/en/buy/auction/2025/contemporary-day-auction/water-lily-pond-with-reflections-study
   Price: N/A
 
 Match 7:
-  Title: Amazon.com: INVIN ART Framed Canvas Giclee Print Art 1951 ...
-  Source: Amazon.com
-  URL: https://www.amazon.com/INVIN-ART-Paloma_lorange-Picasso-Decorations/dp/B07JJ6S5FJ
+  Title: From Monet to Warhol' at the B&E Goulandris Foundation | art ...
+  Source: art scene athens
+  URL: https://artsceneathens.com/2025/12/04/from-monet-to-warhol-at-the-be-goulandris-foundation/
   Price: N/A
 
 Match 8:
-  Title: Picasso "horse With A Youth In Blue" Lithograph
-  Source: LiveAuctioneers
-  URL: https://www.liveauctioneers.com/price-result/picasso-horse-with-a-youth-in-blue-lithograph/
+  Title: Roy Lichtenstein | WATER LILY POND WITH REFLECTIONS (1992 ...
+  Source: MutualArt
+  URL: https://www.mutualart.com/Artwork/WATER-LILY-POND-WITH-REFLECTIONS/3129C1548158BFD5
   Price: N/A
 
 Match 9:
-  Title: Retro 60s Art Poster – Classic Modernist Exhibition ...
-  Source: Etsy
-  URL: https://www.etsy.com/il-en/listing/1739268036/retro-60s-art-poster-classic-modernist
-  Price: $4*
+  Title: Συλλογος... - Συλλογος συνταξιούχων Αγροτικης τράπεζας
+  Source: Facebook
+  URL: https://www.facebook.com/100064738300717/photos/d41d8cd9/1377448751089722/
+  Price: N/A
 
 Match 10:
-  Title: 1971 Print Picasso Child with Orange Stedelijk Museum ...
-  Source: Period Paper Historic Art LLC
-  URL: https://www.periodpaper.com/products/1971-print-picasso-child-with-orange-stedelijk-museum-original-024851-pic3-101
+  Title: Water Lily Pond with Reflections', Roy Lichtenstein, 1992 | Tate
+  Source: Tate
+  URL: https://www.tate.org.uk/art/artworks/lichtenstein-water-lily-pond-with-reflections-al00374
   Price: N/A
 
 Additional Context:
