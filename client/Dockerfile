@@ -2,11 +2,11 @@ FROM node:18-slim AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json only (not lock file - regenerate for linux)
+COPY package.json ./
 
 # Install all dependencies (including dev for building)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY . .
